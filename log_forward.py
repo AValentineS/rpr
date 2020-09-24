@@ -11,6 +11,7 @@ with tailf.Tail("local_log.txt") as tail:
     while True:
         for event in tail:
             if isinstance(event, bytes):
+                print("updating")
                 r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(event)))
                 print("updated")
             elif event is tailf.Truncated:
