@@ -1,7 +1,7 @@
 import os
 import subprocess
 def run_command(command):
-  with open("local_log.txt") as f:
+  with open("local_log.txt", "w") as f:
     process = subprocess.Popen(command,  shell=True, stdout=subprocess.PIPE)
     while True:
         output = process.stdout.readline()
