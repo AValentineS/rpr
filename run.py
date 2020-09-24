@@ -1,5 +1,7 @@
 import os
 import subprocess
+import requests
+import sys
 def run_command(command):
   with open("local_log.txt", "w") as f:
     process = subprocess.Popen(command,  shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -13,6 +15,7 @@ def run_command(command):
         if output:
             print(output.strip())
             f.write(output + "\n")
+            #sys.stderr.write(
             f.flush()
     rc = process.poll()
     return rc
