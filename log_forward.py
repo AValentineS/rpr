@@ -14,7 +14,7 @@ while True:
     #r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
     if size!=oldsize:
         with open(fn, "r") as f:
-            if size>oldsize:
+            if size>oldsize and oldsize>=0:
                 f.seek(oldsize)
             for line in f:
                 r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
