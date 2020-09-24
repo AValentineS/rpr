@@ -6,7 +6,7 @@ import time
 
 time.sleep(20)
 
-with tailf.Tail("/tmp/local_log.txt") as tail:
+with tailf.Tail("local_log.txt") as tail:
     print("started")
     while True:
         for event in tail:
@@ -15,8 +15,6 @@ with tailf.Tail("/tmp/local_log.txt") as tail:
                 print("updated")
             elif event is tailf.Truncated:
                 print("File was truncated")
-            else:
-                assert False, "unreachable" # currently. more events may be introduced later
         time.sleep(0.01) # save CPU cycles
   
             
