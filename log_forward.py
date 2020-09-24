@@ -1,7 +1,7 @@
 import requests
 import base64
 import sys
-from tailf 
+import tailf 
 import time
 
 time.sleep(20)
