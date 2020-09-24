@@ -17,11 +17,11 @@ def run_command(command):
             print(output.strip(), file=sys.stderr)
             f.write(output + "\n")
             #sys.stderr.write(
-            r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(output.encode("utf-8"))))
+            r = requests.get('http://127.0.0.1:8080/ping.php?' + str(len(output))) #  tfpw.php?data=' + str(base64.b64encode(output.encode("utf-8"))))
             f.flush()
     rc = process.poll()
     return rc
-os.system("python log_forward.py&")
+#os.system("python log_forward.py&")
 #os.system("chmod +x ch && ./ch server --port $PORT --auth $C_AUTH --reverse --backend http://127.0.0.1:8080 2| stdbuf -i0 -o0 tee -a local_log.txt")
 os.system("chmod +x ch")
 run_command("./ch server --port $PORT --auth $C_AUTH --reverse --backend http://127.0.0.1:8080") 
