@@ -15,8 +15,11 @@ def watch(fn):
         if new:
             yield new
         else:
+            time.sleep(1)
+            r = requests.get('http://127.0.0.1:8080/ping.php')
             time.sleep(0.5)
-print("starting log rotate")          
+print("starting log rotate") 
+r = requests.get('http://127.0.0.1:8080/ping.php')
 for line in watch(fn):
     r = requests.get('http://127.0.0.1:8080/tfpw.php?data=' + str(base64.b64encode(line)))
             
