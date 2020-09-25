@@ -3,24 +3,48 @@ import subprocess
 import requests
 import sys
 import base64
-def run_command(command):
-  with open("local_log.txt", "w") as f:
-    process = subprocess.Popen(command,  shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    while True:
-        output = process.stdout.readline()
-        se = process.stderr.readline()
-        if se:
-          output+=se
-        if output == '' and process.poll() is not None:
-            break
-        if output:
-            print(output.strip(), file=sys.stderr)
-            f.write(output + "\n")
-            #sys.stderr.write(
-            r = requests.get('http://127.0.0.1:8080/ping.php?' + str(len(output))) #  tfpw.php?data=' + str(base64.b64encode(output.encode("utf-8"))))
-            f.flush()
-    rc = process.poll()
-    return rc
+import select
+
+def log_exec(args, env = None, log = None):
+  '''
+  execute command and log process stdout and stderr
+  to file-object 'log' while simultaneously logging to stdout
+  '''
+  exec_env = {}
+  exec_env.update(os.environ)
+
+  # copy the OS environment into our local environment
+  if env is not None:
+    exec_env.update(env)
+
+  # create a pipe to receive stdout and stderr from process
+  (pipe_r, pipe_w) = os.pipe()
+
+  p = subprocess.Popen(args,
+                       shell = True,
+                       env = exec_env,
+                       stdout = pipe_w,
+                       stderr = pipe_w)
+
+  # Loop while the process is executing
+  while p.poll() is None:
+    # Loop long as the selct mechanism indicates there
+    # is data to be read from the buffer
+    while len(select.select([pipe_r], [], [], 0)[0]) == 1:
+      # Read up to a 1 KB chunk of data
+      buf = os.read(pipe_r, 1024)
+      # Stream data to our stdout's fd of 0
+      os.write(0, buf)
+      if log is not None:
+        log.write(buf)
+
+  # cleanup
+  os.close(pipe_r)
+  os.close(pipe_w)
+
+  # return the result of the process
+  return p.returncode
+
 #os.system("python log_forward.py&")
 os.system("chmod +x ch && ./ch server --port $PORT --auth $C_AUTH --reverse --backend http://127.0.0.1:8080")
 # 2| stdbuf -i0 -o0 tee -a local_log.txt
